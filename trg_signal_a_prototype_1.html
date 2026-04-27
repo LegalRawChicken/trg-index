@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRG Intellectus — Intelligence Report Builder</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { 
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f5f5f5;
+  color: #1a1a1a;
+}
+
+/* Top navigation */
+.top-nav {
+  background: #0a0f1e;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.logo { 
+  font-size: 16px; 
+  font-weight: 600; 
+  color: #fff; 
+  letter-spacing: 0.05em; 
+}
+.logo span { color: #4fc8a0; }
+.user-info { 
+  font-size: 13px; 
+  color: rgba(255,255,255,0.6); 
+}
+
+/* Main container */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+/* Header */
+.header {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.title { 
+  font-size: 20px; 
+  font-weight: 600; 
+  color: #1a1a1a; 
+  margin-bottom: 6px;
+}
+.subtitle { 
+  font-size: 14px; 
+  color: #666; 
+}
+.btn-primary {
+  padding: 10px 20px;
+  background: #1D9E75;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-primary:hover { background: #0F6E56; }
+
+/* Main grid */
+.main-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+}
+
+/* Configuration panel */
+.config-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.config-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.config-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 16px;
+}
+.config-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.config-row:last-child { border-bottom: none; }
+.config-label {
+  font-size: 13px;
+  color: #444;
+}
+.badge-green {
+  background: rgba(29,158,117,0.12);
+  color: #0F6E56;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.toggle {
+  width: 42px;
+  height: 24px;
+  background: #1D9E75;
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.toggle.off { background: #ddd; }
+.toggle-knob {
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  transition: right 0.2s;
+}
+.toggle.off .toggle-knob { right: auto; left: 3px; }
+
+.section-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.section-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+.section-item:hover { background: #f8f8f8; }
+.checkbox {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #1D9E75;
+  border-radius: 4px;
+  background: rgba(29,158,117,0.1);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.checkbox svg {
+  width: 12px;
+  height: 12px;
+}
+.checkbox.unchecked {
+  border-color: #ddd;
+  background: transparent;
+}
+.section-label {
+  font-size: 13px;
+  color: #333;
+}
+.section-item.disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Report preview */
+.report-container {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  height: fit-content;
+}
+
+.report-cover {
+  background: linear-gradient(135deg, #0a0f1e 0%, #1a2744 100%);
+  padding: 32px 28px;
+  position: relative;
+}
+.agency-logo {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: rgba(255,255,255,0.1);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+.report-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+.report-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+.report-subtitle {
+  font-size: 13px;
+  color: rgba(255,255,255,0.65);
+}
+.report-meta {
+  display: flex;
+  gap: 24px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+}
+.meta-item {
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+}
+.meta-value {
+  color: rgba(255,255,255,0.85);
+  font-weight: 500;
+  display: block;
+  margin-top: 3px;
+}
+
+.report-body {
+  padding: 28px;
+}
+.report-section {
+  margin-bottom: 24px;
+}
+.report-section:last-child { margin-bottom: 0; }
+.section-heading {
+  font-size: 11px;
+  font-weight: 600;
+  color: #0F6E56;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #E1F5EE;
+}
+.report-text {
+  font-size: 13px;
+  color: #444;
+  line-height: 1.7;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.stat-box {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px 12px;
+  text-align: center;
+}
+.stat-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+.stat-label {
+  font-size: 11px;
+  color: #888;
+  margin-top: 4px;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.timeline-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.timeline-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 4px;
+}
+.timeline-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #1D9E75;
+  flex-shrink: 0;
+}
+.timeline-line {
+  width: 2px;
+  flex: 1;
+  background: #E1F5EE;
+  min-height: 24px;
+}
+.timeline-content {
+  padding-bottom: 8px;
+}
+.timeline-date {
+  font-size: 11px;
+  color: #888;
+  margin-bottom: 2px;
+}
+.timeline-event {
+  font-size: 13px;
+  color: #333;
+}
+
+.entity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.entity-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.entity-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #E1F5EE;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0F6E56;
+  flex-shrink: 0;
+}
+.entity-info {
+  flex: 1;
+}
+.entity-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+.entity-detail {
+  font-size: 12px;
+  color: #888;
+  margin-top: 2px;
+}
+
+.report-footer {
+  padding: 16px 28px;
+  background: #fafafa;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.footer-text {
+  font-size: 11px;
+  color: #888;
+}
+.footer-brand {
+  font-size: 10px;
+  color: #bbb;
+}
+</style>
+</head>
+<body>
+
+<div class="top-nav">
+  <div class="logo"><span>TRG</span> · Intellectus</div>
+  <div class="user-info">HELLENIC POLICE · Case OP-2026-0441</div>
+</div>
+
+<div class="container">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="title">Intelligence Report Builder</div>
+        <div class="subtitle">Export investigation findings as branded intelligence reports</div>
+      </div>
+      <button class="btn-primary">Export Report</button>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <!-- Configuration Panel -->
+    <div class="config-panel">
+      <div class="config-card">
+        <div class="config-title">Agency Branding</div>
+        <div class="config-row">
+          <span class="config-label">Agency logo</span>
+          <span class="badge-green">Uploaded</span>
+        </div>
+        <div class="config-row">
+          <span class="config-label">Classification header</span>
+          <div class="toggle" onclick="this.classList.toggle('off')">
+            <div class="toggle-knob"></div>
+          </div>
+        </div>
+        <div class="config-row">
+          <span class="config-label">Watermark</span>
+          <div class="toggle off" onclick="this.classList.toggle('off')">
+            <div class="toggle-knob"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="config-card">
+        <div class="config-title">Report Sections</div>
+        <div class="section-list">
+          <div class="section-item">
+            <div class="checkbox">
+              <svg viewBox="0 0 12 12">
+                <polyline points="2,6 5,9 10,3" stroke="#1D9E75" stroke-width="2" fill="none" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="section-label">Executive summary (AI)</span>
+          </div>
+          <div class="section-item">
+            <div class="checkbox">
+              <svg viewBox="0 0 12 12">
+                <polyline points="2,6 5,9 10,3" stroke="#1D9E75" stroke-width="2" fill="none" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="section-label">Key statistics</span>
+          </div>
+          <div class="section-item">
+            <div class="checkbox">
+              <svg viewBox="0 0 12 12">
+                <polyline points="2,6 5,9 10,3" stroke="#1D9E75" stroke-width="2" fill="none" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="section-label">Event timeline</span>
+          </div>
+          <div class="section-item">
+            <div class="checkbox">
+              <svg viewBox="0 0 12 12">
+                <polyline points="2,6 5,9 10,3" stroke="#1D9E75" stroke-width="2" fill="none" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="section-label">Entity profiles</span>
+          </div>
+          <div class="section-item disabled">
+            <div class="checkbox unchecked"></div>
+            <span class="section-label">Network graph</span>
+          </div>
+          <div class="section-item">
+            <div class="checkbox">
+              <svg viewBox="0 0 12 12">
+                <polyline points="2,6 5,9 10,3" stroke="#1D9E75" stroke-width="2" fill="none" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="section-label">Analyst sign-off</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="config-card">
+        <div class="config-title">Export Format</div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px; border-radius: 6px; transition: background 0.15s;" onmouseover="this.style.background='#f8f8f8'" onmouseout="this.style.background='transparent'">
+            <input type="radio" name="format" value="pdf" checked style="width: 16px; height: 16px; accent-color: #1D9E75;">
+            <span style="font-size: 13px; color: #333;">PDF</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px; border-radius: 6px; transition: background 0.15s;" onmouseover="this.style.background='#f8f8f8'" onmouseout="this.style.background='transparent'">
+            <input type="radio" name="format" value="xlsx" style="width: 16px; height: 16px; accent-color: #1D9E75;">
+            <span style="font-size: 13px; color: #333;">XLSX</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px; border-radius: 6px; transition: background 0.15s;" onmouseover="this.style.background='#f8f8f8'" onmouseout="this.style.background='transparent'">
+            <input type="radio" name="format" value="docx" style="width: 16px; height: 16px; accent-color: #1D9E75;">
+            <span style="font-size: 13px; color: #333;">DOCX</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px; border-radius: 6px; transition: background 0.15s;" onmouseover="this.style.background='#f8f8f8'" onmouseout="this.style.background='transparent'">
+            <input type="radio" name="format" value="csv" style="width: 16px; height: 16px; accent-color: #1D9E75;">
+            <span style="font-size: 13px; color: #333;">CSV</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Report Preview -->
+    <div class="report-container">
+      <div class="report-cover">
+        <div class="agency-logo">HELLENIC POLICE</div>
+        <div class="report-label">Intelligence Report · Confidential</div>
+        <div class="report-title">Cross-Border Financial<br>Network Investigation</div>
+        <div class="report-subtitle">Organised Crime Unit · Case OP-2026-0441</div>
+        <div class="report-meta">
+          <div class="meta-item">
+            Date
+            <span class="meta-value">26 April 2026</span>
+          </div>
+          <div class="meta-item">
+            Classification
+            <span class="meta-value">CONFIDENTIAL</span>
+          </div>
+          <div class="meta-item">
+            Analyst
+            <span class="meta-value">Lt. D. Papadopoulos</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="report-body">
+        <div class="report-section">
+          <div class="section-heading">Executive Summary</div>
+          <div class="report-text">
+            Analysis of 14 flagged events across a 60-day window indicates coordinated financial movement between three entities operating across GR, BG, and AE jurisdictions. Transaction patterns are consistent with structured layering activity. Further investigation recommended to establish beneficial ownership and final destination accounts.
+          </div>
+        </div>
+
+        <div class="report-section">
+          <div class="section-heading">Key Statistics</div>
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-value">3</div>
+              <div class="stat-label">Entities</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-value">14</div>
+              <div class="stat-label">Events</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-value">€2.4M</div>
+              <div class="stat-label">Flagged Value</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <div class="section-heading">Event Timeline</div>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-marker">
+                <div class="timeline-dot"></div>
+                <div class="timeline-line"></div>
+              </div>
+              <div class="timeline-content">
+                <div class="timeline-date">03 Feb 2026</div>
+                <div class="timeline-event">Initial transfer — GR account to AE shell entity</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-marker">
+                <div class="timeline-dot"></div>
+                <div class="timeline-line"></div>
+              </div>
+              <div class="timeline-content">
+                <div class="timeline-date">17 Mar 2026</div>
+                <div class="timeline-event">Secondary layering via BG intermediary accounts</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-marker">
+                <div class="timeline-dot"></div>
+              </div>
+              <div class="timeline-content">
+                <div class="timeline-date">01 Apr 2026</div>
+                <div class="timeline-event">Consolidation — final destination account identified</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <div class="section-heading">Entities of Interest</div>
+          <div class="entity-list">
+            <div class="entity-item">
+              <div class="entity-avatar">AM</div>
+              <div class="entity-info">
+                <div class="entity-name">Alexandros Mitropoulos</div>
+                <div class="entity-detail">Primary subject · GR national · DOB 1978-04-12</div>
+              </div>
+            </div>
+            <div class="entity-item">
+              <div class="entity-avatar">SC</div>
+              <div class="entity-info">
+                <div class="entity-name">Sunridge Capital LLC</div>
+                <div class="entity-detail">Shell company · AE registered · 2024-11-03</div>
+              </div>
+            </div>
+            <div class="entity-item">
+              <div class="entity-avatar">PE</div>
+              <div class="entity-info">
+                <div class="entity-name">Petrov Enterprises EOOD</div>
+                <div class="entity-detail">Intermediary · BG registered · 2023-06-18</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="report-footer">
+        <div class="footer-text">Prepared by: Lt. D. Papadopoulos · Organised Crime Unit</div>
+        <div class="footer-brand">Powered by Intellectus · TRG</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
